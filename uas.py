@@ -37,7 +37,7 @@ class TreeNode:
         self.is_folder = is_folder  
         self.ukuran_mb = ukuran_mb if not is_folder else 0 
         self.url_asli_github = url_asli_github if not is_folder else "" 
-        self.is_favorite = False    # Fitur Favorit File & Folder
+        self.is_favorite = False    
         self.children = []          
         self.parent = None          
 
@@ -115,9 +115,16 @@ def dapatkan_path_list(node):
         sementara = sementara.parent
     return path
 
+def tentukan_mime_type(nama_file):
+    ekstensi = nama_file.split(".")[-1].lower() if "." in nama_file else ""
+    if ekstensi == "pdf": return "application/pdf"
+    if ekstensi in ["jpg", "jpeg"]: return "image/jpeg"
+    if ekstensi == "png": return "image/png"
+    return "text/plain"
+
 
 # ====================================================================
-# 4. INISIALISASI SESSION STATE (SINKRON DENGAN GITHUB HANDINI)
+# 4. INISIALISASI SESSION STATE (SINKRON GITHUB HANDINI)
 # ====================================================================
 if "sistem_file" not in st.session_state:
     sistem_file = GeneralTree("🖥️ Home")
@@ -130,10 +137,9 @@ if "sistem_file" not in st.session_state:
     local_disk_c.add_child(dokumen)
     local_disk_c.add_child(download)
 
-    # Username GitHub asli kamu
     username_github = "handini7642-beep" 
 
-    # File PDF (Hanya untuk Diunduh)
+    # File PDF
     dokumen.add_child(TreeNode(
         "Tugas_Struktur_Data.pdf", 
         is_folder=False, 
@@ -204,7 +210,6 @@ with st.sidebar:
                         st.session_state.opened_file = item
                     st.rerun()
 
-    # MENU BARU: DAFTAR KOLEKSI FAVORIT KAMU
     st.markdown("---")
     st.markdown("### ⭐ Koleksi Favorit")
     list_fav = st.session_state.sistem_file.dapatkan_semua_favorit()
@@ -274,9 +279,14 @@ with kolom_files:
                             st.session_state.opened_file = None
                             st.rerun()
                 else:
-                    # ATURAN KHUSUS REVISI REKOMENDASI ANDIN DI SINI:
+                    # AMBIL DATA BINARI DARI GITHUB UNTUK FITUR DOWNLOAD STABLE
+                    try:
+                        respon_data = requests.get(child.url_asli_github).content
+                    except:
+                        respon_data = b"Gagal mengambil data file asli dari cloud."
+
                     if child.data.endswith(".pdf"):
-                        # Kalau PDF: Tombol buka dihilangkan, sisa Favorit dan Unduh saja
+                        # PDF: Sesuai keinginanmu, HANYA tombol Favorit dan Unduh Asli Streamlit
                         c1, c2, c3 = st.columns([4, 1, 1])
                         c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
                         with c2:
@@ -284,9 +294,16 @@ with kolom_files:
                                 child.is_favorite = not child.is_favorite
                                 st.rerun()
                         with c3:
-                            st.markdown(f'<a href="{child.url_asli_github}" target="_blank"><button style="width:100%; background-color:#4F46E5; color:white; border:none; padding:6px; border-radius:5px; cursor:pointer;">Unduh 📥</button></a>', unsafe_allow_html=True)
+                            st.download_button(
+                                label="Unduh 📥",
+                                data=respon_data,
+                                file_name=child.data,
+                                mime=tentukan_mime_type(child.data),
+                                key=f"dl_{id(child)}",
+                                use_container_width=True
+                            )
                     else:
-                        # Kalau Foto dan Teks: Tombol Buka, Unduh, dan Favorit tetap ada lengkap
+                        # FOTO & TEXT: Lengkap tombol Favorit, Buka Preview, dan Unduh Asli Streamlit
                         c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
                         c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
                         with c2:
@@ -298,7 +315,14 @@ with kolom_files:
                                 st.session_state.opened_file = child
                                 st.rerun()
                         with c4:
-                            st.markdown(f'<a href="{child.url_asli_github}" target="_blank"><button style="width:100%; background-color:#4F46E5; color:white; border:none; padding:6px; border-radius:5px; cursor:pointer;">Unduh 📥</button></a>', unsafe_allow_html=True)
+                            st.download_button(
+                                label="Unduh 📥",
+                                data=respon_data,
+                                file_name=child.data,
+                                mime=tentukan_mime_type(child.data),
+                                key=f"dl_{id(child)}",
+                                use_container_width=True
+                            )
 
     # AREA SCREEN VIEWER OUTPUT (PREVIEW FILE)
     if st.session_state.opened_file is not None:
