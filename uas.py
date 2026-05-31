@@ -2,20 +2,38 @@ import streamlit as st
 import requests
 
 # ====================================================================
-# 1. KONFIGURASI HALAMAN & STYLE CSS
+# 1. KONFIGURASI HALAMAN & STYLE CSS (TEMA WARNA PASTEL CANTIK & SOFT)
 # ====================================================================
 st.set_page_config(page_title="File Explorer Pro", layout="wide")
 
 st.markdown("""
     <style>
-    .stApp { background-color: #f8f9fa; }
+    /* Background utama aplikasi diubah jadi warna lavender pastel yang sangat soft */
+    .stApp { 
+        background-color: #F0F2FA; 
+    }
+    
+    /* Banner utama My Files diubah dari biru jreng menjadi dusty pink/baby pink pastel soft */
+    .main-banner {
+        background: linear-gradient(135deg, #F3B0C3, #FFC8DD); 
+        padding: 35px; 
+        border-radius: 16px; 
+        margin-bottom: 25px; 
+        color: #FFFFFF;
+        box-shadow: 0 4px 15px rgba(243, 176, 195, 0.2);
+    }
+    
+    /* Box File / Folder List dibuat putih bersih dengan border soft lavender */
     div[data-testid="stCard"] {
         background-color: #ffffff;
         border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border: 1px solid #e9ecef;
+        padding: 12px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        border: 1px solid #E2E7F3;
+        margin-bottom: 10px;
     }
+    
+    /* Preview area untuk teks catatan */
     .file-content {
         background-color: #1e1e1e;
         color: #d4d4d4;
@@ -23,7 +41,7 @@ st.markdown("""
         border-radius: 8px;
         font-family: 'Courier New', Courier, monospace;
         white-space: pre-wrap;
-        border-left: 5px solid #4F46E5;
+        border-left: 5px solid #F3B0C3;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -169,13 +187,14 @@ if "sistem_file" not in st.session_state:
 
 
 # ====================================================================
-# 5. ANTARMUKA UTAMA (STREAMLIT UI)
+# 5. ANTARMUKA UTAMA (STREAMLIT UI DENGAN TAMPILAN BARU)
 # ====================================================================
 
+# Kotak Judul My Files diubah menggunakan class CSS .main-banner pastel soft
 st.markdown("""
-    <div style="background: linear-gradient(135deg, #4F46E5, #06B6D4); padding: 25px; border-radius: 15px; margin-bottom: 25px; color: white;">
-        <h1 style='margin:0; font-weight: 700;'>🗃️ My File</h1>
-        <p style='margin:5px 0 0 0; opacity: 0.9;'>Smart File Management</p>
+    <div class="main-banner">
+        <h1 style='margin:0; font-weight: 700; font-size: 38px;'>🗃️ My Files</h1>
+        <p style='margin:8px 0 0 0; font-size: 14px; opacity: 0.95;'>Smart File Management</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -279,14 +298,12 @@ with kolom_files:
                             st.session_state.opened_file = None
                             st.rerun()
                 else:
-                    # AMBIL DATA BINARI DARI GITHUB UNTUK FITUR DOWNLOAD STABLE
                     try:
                         respon_data = requests.get(child.url_asli_github).content
                     except:
                         respon_data = b"Gagal mengambil data file asli dari cloud."
 
                     if child.data.endswith(".pdf"):
-                        # PDF: Sesuai keinginanmu, HANYA tombol Favorit dan Unduh Asli Streamlit
                         c1, c2, c3 = st.columns([4, 1, 1])
                         c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
                         with c2:
@@ -303,7 +320,6 @@ with kolom_files:
                                 use_container_width=True
                             )
                     else:
-                        # FOTO & TEXT: Lengkap tombol Favorit, Buka Preview, dan Unduh Asli Streamlit
                         c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
                         c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
                         with c2:
@@ -349,7 +365,7 @@ with kolom_aksi:
     tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah Berkas", "📝 Rename", "🗑️ Hapus", "🗂️ File Structure"])
     
     with tab_tambah:
-        nama_baru = st.text_input("Nama Baru:", key="add_name").strip()
+        nama_baru = st.text_input("Nama Berkas/Folder Baru:", key="add_name").strip()
         tipe = st.radio("Jenis:", ("Folder", "File"), horizontal=True)
         ukuran_input = st.number_input("Ukuran (MB):", min_value=1, value=2) if tipe == "File" else 0
         if st.button("Simpan", type="primary", use_container_width=True):
