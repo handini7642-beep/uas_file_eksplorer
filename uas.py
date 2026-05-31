@@ -10,7 +10,7 @@ st.markdown("""
     <style>
     /* Background utama aplikasi diubah jadi warna lavender pastel yang sangat soft */
     .stApp { 
-        background-color: #F0F2FA; 
+        background-color: #FAD7E8; 
     }
     
     /* Banner utama My Files diubah dari biru jreng menjadi dusty pink/baby pink pastel soft */
