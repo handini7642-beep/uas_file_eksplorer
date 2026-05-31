@@ -175,7 +175,7 @@ if "sistem_file" not in st.session_state:
 st.markdown("""
     <div style="background: linear-gradient(135deg, #4F46E5, #06B6D4); padding: 25px; border-radius: 15px; margin-bottom: 25px; color: white;">
         <h1 style='margin:0; font-weight: 700;'>🗃️ My File</h1>
-        <p style='margin:5px 0 0 0; opacity: 0.9;'>Aplikasi UAS Terintegrasi File Asli Cloud GitHub</p>
+        <p style='margin:5px 0 0 0; opacity: 0.9;'>Smart File Management</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -345,8 +345,8 @@ with kolom_files:
             st.rerun()
 
 with kolom_aksi:
-    st.subheader("⚙️ Pengelola")
-    tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah", "📝 Rename", "🗑️ Hapus", "🗂️ Structure"])
+    st.subheader("⚙️ Pengelola Berkas")
+    tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah Berkas", "📝 Rename", "🗑️ Hapus", "🗂️ File Structure"])
     
     with tab_tambah:
         nama_baru = st.text_input("Nama Baru:", key="add_name").strip()
