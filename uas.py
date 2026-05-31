@@ -37,6 +37,7 @@ class TreeNode:
         self.is_folder = is_folder  
         self.ukuran_mb = ukuran_mb if not is_folder else 0 
         self.url_asli_github = url_asli_github if not is_folder else "" 
+        self.is_favorite = False    # Fitur Favorit File & Folder
         self.children = []          
         self.parent = None          
 
@@ -56,7 +57,8 @@ class GeneralTree:
     def display_streamlit(self, node=None, level=0):
         if node is None: node = self.root
         ikon = "📁 " if node.is_folder else dapatkan_ikon_file(node.data)
-        st.code("   " * level + f"└── {ikon}{node.data}", language="")
+        fav = " ⭐" if node.is_favorite else ""
+        st.code("   " * level + f"└── {ikon}{node.data}{fav}", language="")
         for child in node.children:
             self.display_streamlit(child, level + 1)
 
@@ -68,6 +70,16 @@ class GeneralTree:
             hasil.append(node)
         for child in node.children:
             self.cari_global(keyword, child, hasil)
+        return hasil
+
+    def dapatkan_semua_favorit(self, node=None, hasil=None):
+        if node is None:
+            node = self.root
+            hasil = []
+        if node.is_favorite and node != self.root:
+            hasil.append(node)
+        for child in node.children:
+            self.dapatkan_semua_favorit(child, hasil)
         return hasil
 
     def hitung_statistik(self, node=None, stats=None):
@@ -105,7 +117,7 @@ def dapatkan_path_list(node):
 
 
 # ====================================================================
-# 4. INISIALISASI SESSION STATE (SINKRON DENGAN USERNAME KAMU)
+# 4. INISIALISASI SESSION STATE (SINKRON DENGAN GITHUB HANDINI)
 # ====================================================================
 if "sistem_file" not in st.session_state:
     sistem_file = GeneralTree("🖥️ Home")
@@ -118,10 +130,10 @@ if "sistem_file" not in st.session_state:
     local_disk_c.add_child(dokumen)
     local_disk_c.add_child(download)
 
-    # Username asli kamu sudah terpasang rapi di sini
+    # Username GitHub asli kamu
     username_github = "handini7642-beep" 
 
-    # Pastikan pakai link 'raw.githubusercontent.com' lagi ya
+    # File PDF (Hanya untuk Diunduh)
     dokumen.add_child(TreeNode(
         "Tugas_Struktur_Data.pdf", 
         is_folder=False, 
@@ -129,7 +141,7 @@ if "sistem_file" not in st.session_state:
         url_asli_github=f"https://raw.githubusercontent.com/{username_github}/uas_file_eksplorer/main/Dokumen/Tugas_Struktur_Data.pdf"
     ))
     
-    # Jalur tembak ke Catatan Teks Asli milikmu
+    # File Catatan Teks
     dokumen.add_child(TreeNode(
         "Catatan_Algoritma.txt", 
         is_folder=False, 
@@ -137,7 +149,7 @@ if "sistem_file" not in st.session_state:
         url_asli_github=f"https://raw.githubusercontent.com/{username_github}/uas_file_eksplorer/main/Dokumen/Catatan_Algoritma.txt"
     ))
     
-    # Jalur tembak ke Foto Asli milikmu
+    # File Foto Gambar
     download.add_child(TreeNode(
         "foto.jpg", 
         is_folder=False, 
@@ -185,12 +197,30 @@ with st.sidebar:
                 tipe_str = "Folder" if item.is_folder else "File"
                 if st.button(f"📍 Buka: {item.data} ({tipe_str})", key=f"search_{id(item)}", use_container_width=True):
                     if item.is_folder:
-                        st.session_node = item
+                        st.session_state.current_node = item
                         st.session_state.opened_file = None
                     else:
                         st.session_state.current_node = item.parent
                         st.session_state.opened_file = item
                     st.rerun()
+
+    # MENU BARU: DAFTAR KOLEKSI FAVORIT KAMU
+    st.markdown("---")
+    st.markdown("### ⭐ Koleksi Favorit")
+    list_fav = st.session_state.sistem_file.dapatkan_semua_favorit()
+    if not list_fav:
+        st.caption("Belum ada file/folder favorit.")
+    else:
+        for fav_node in list_fav:
+            ikon_fav = "📁 " if fav_node.is_folder else dapatkan_ikon_file(fav_node.data)
+            if st.button(f"{ikon_fav} {fav_node.data}", key=f"fav_sidebar_{id(fav_node)}", use_container_width=True):
+                if fav_node.is_folder:
+                    st.session_state.current_node = fav_node
+                    st.session_state.opened_file = None
+                else:
+                    st.session_state.current_node = fav_node.parent
+                    st.session_state.opened_file = fav_node
+                st.rerun()
 
 # AREA NAVIGATION BREADCRUMBS
 b_nodes = dapatkan_path_list(st.session_state.current_node)
@@ -228,29 +258,49 @@ with kolom_files:
         for child in children_nodes:
             ikon = "📁 " if child.is_folder else dapatkan_ikon_file(child.data)
             label_ukuran = "" if child.is_folder else f"({child.ukuran_mb} MB)"
+            fav_ikon = "⭐" if child.is_favorite else "☆"
             
             with st.container(border=True):
                 if child.is_folder:
-                    c1, c2 = st.columns([5, 1])
+                    c1, c2, c3 = st.columns([4, 1, 1])
                     c1.markdown(f"#### {ikon} {child.data}", unsafe_allow_html=True)
                     with c2:
+                        if st.button(f"{fav_ikon} Fav", key=f"fav_folder_{id(child)}", use_container_width=True):
+                            child.is_favorite = not child.is_favorite
+                            st.rerun()
+                    with c3:
                         if st.button("Buka 📂", key=f"buka_{id(child)}", use_container_width=True):
                             st.session_state.current_node = child
                             st.session_state.opened_file = None
                             st.rerun()
                 else:
-                    c1, c2, c3 = st.columns([4, 1, 1])
-                    c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
-                    
-                    with c2:
-                        if st.button("Buka 👁️", key=f"buka_file_{id(child)}", use_container_width=True):
-                            st.session_state.opened_file = child
-                            st.rerun()
-                            
-                    with c3:
-                        st.markdown(f'<a href="{child.url_asli_github}" target="_blank"><button style="width:100%; background-color:#4F46E5; color:white; border:none; padding:6px; border-radius:5px; cursor:pointer;">Unduh 📥</button></a>', unsafe_allow_html=True)
+                    # ATURAN KHUSUS REVISI REKOMENDASI ANDIN DI SINI:
+                    if child.data.endswith(".pdf"):
+                        # Kalau PDF: Tombol buka dihilangkan, sisa Favorit dan Unduh saja
+                        c1, c2, c3 = st.columns([4, 1, 1])
+                        c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
+                        with c2:
+                            if st.button(f"{fav_ikon} Fav", key=f"fav_file_{id(child)}", use_container_width=True):
+                                child.is_favorite = not child.is_favorite
+                                st.rerun()
+                        with c3:
+                            st.markdown(f'<a href="{child.url_asli_github}" target="_blank"><button style="width:100%; background-color:#4F46E5; color:white; border:none; padding:6px; border-radius:5px; cursor:pointer;">Unduh 📥</button></a>', unsafe_allow_html=True)
+                    else:
+                        # Kalau Foto dan Teks: Tombol Buka, Unduh, dan Favorit tetap ada lengkap
+                        c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
+                        c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
+                        with c2:
+                            if st.button(f"{fav_ikon} Fav", key=f"fav_file_{id(child)}", use_container_width=True):
+                                child.is_favorite = not child.is_favorite
+                                st.rerun()
+                        with c3:
+                            if st.button("Buka 👁️", key=f"buka_file_{id(child)}", use_container_width=True):
+                                st.session_state.opened_file = child
+                                st.rerun()
+                        with c4:
+                            st.markdown(f'<a href="{child.url_asli_github}" target="_blank"><button style="width:100%; background-color:#4F46E5; color:white; border:none; padding:6px; border-radius:5px; cursor:pointer;">Unduh 📥</button></a>', unsafe_allow_html=True)
 
-    # AREA SCREEN VIEWER OUTPUT (PREVIEW)
+    # AREA SCREEN VIEWER OUTPUT (PREVIEW FILE)
     if st.session_state.opened_file is not None:
         st.markdown("---")
         st.markdown(f"### 🖥️ Preview File: `{st.session_state.opened_file.data}`")
@@ -265,15 +315,6 @@ with kolom_files:
             
         elif st.session_state.opened_file.data.endswith((".jpg", ".jpeg", ".png")):
             st.image(st.session_state.opened_file.url_asli_github, caption="Preview Foto dari GitHub", use_container_width=True)
-            
-        # KODE BARU: Langsung memunculkan dokumen PDF di dalam aplikasi
-        elif st.session_state.opened_file.data.endswith(".pdf"):
-            st.success("📄 Dokumen PDF Berhasil Dimuat dari GitHub:")
-
-            # Trik mengurung file PDF menggunakan iframe HTML agar tampil di bawah
-            pdf_url = st.session_state.opened_file.url_asli_github
-            komponen_pdf = f'<iframe src="{pdf_url}" width="100%" height="600" type="application/pdf"></iframe>'
-            st.markdown(komponen_pdf, unsafe_allow_html=True)
             
         if st.button("Tutup Preview ❌"):
             st.session_state.opened_file = None
