@@ -2,20 +2,32 @@ import streamlit as st
 import requests
 
 # ====================================================================
-# 1. KONFIGURASI HALAMAN & STYLE CSS
+# 1. KONFIGURASI HALAMAN & STYLE CSS (DIUBAH SESUAI FOTO)
 # ====================================================================
 st.set_page_config(page_title="File Explorer Pro", layout="wide")
 
 st.markdown("""
     <style>
-    .stApp { background-color: #f8f9fa; }
+    .stApp { background-color: #ffffff; }
+    
+    /* Style untuk Banner Biru Utama */
+    .main-banner {
+        background-color: #2B82EA; 
+        padding: 40px; 
+        border-radius: 15px; 
+        margin-bottom: 20px; 
+        color: white;
+    }
+    
+    /* Box File / Folder List */
     div[data-testid="stCard"] {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px 15px;
+        box-shadow: none;
         border: 1px solid #e9ecef;
     }
+    
     .file-content {
         background-color: #1e1e1e;
         color: #d4d4d4;
@@ -23,7 +35,7 @@ st.markdown("""
         border-radius: 8px;
         font-family: 'Courier New', Courier, monospace;
         white-space: pre-wrap;
-        border-left: 5px solid #4F46E5;
+        border-left: 5px solid #2B82EA;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -124,12 +136,12 @@ def tentukan_mime_type(nama_file):
 
 
 # ====================================================================
-# 4. INISIALISASI SESSION STATE (SINKRON GITHUB HANDINI)
+# 4. INISIALISASI SESSION STATE
 # ====================================================================
 if "sistem_file" not in st.session_state:
     sistem_file = GeneralTree("🖥️ Home")
     
-    local_disk_c = TreeNode("🖴 Local Disk (C:)", is_folder=True)
+    local_disk_c = TreeNode("Local Disk (C:)", is_folder=True)
     sistem_file.root.add_child(local_disk_c)
 
     dokumen = TreeNode("Dokumen", is_folder=True)
@@ -169,16 +181,18 @@ if "sistem_file" not in st.session_state:
 
 
 # ====================================================================
-# 5. ANTARMUKA UTAMA (STREAMLIT UI)
+# 5. ANTARMUKA UTAMA (STREAMLIT UI SESUAI DESIGN BARU)
 # ====================================================================
 
+# Banner Biru Sesuai Foto User
 st.markdown("""
-    <div style="background: linear-gradient(135deg, #4F46E5, #06B6D4); padding: 25px; border-radius: 15px; margin-bottom: 25px; color: white;">
-        <h1 style='margin:0; font-weight: 700;'>🗃️ Smart File Explorer Kelompok</h1>
-        <p style='margin:5px 0 0 0; opacity: 0.9;'>Aplikasi UAS Terintegrasi File Asli Cloud GitHub</p>
+    <div class="main-banner">
+        <h1 style='margin:0; font-weight: 700; font-size: 42px;'>🗂️ My Files</h1>
+        <p style='margin:10px 0 0 0; font-size: 16px; opacity: 0.9;'>Aplikasi Manajemen Smart File Management</p>
     </div>
 """, unsafe_allow_html=True)
 
+# Sidebar Kiri
 with st.sidebar:
     st.markdown("### 📊 Status Penyimpanan")
     stats = st.session_state.sistem_file.hitung_statistik()
@@ -214,7 +228,7 @@ with st.sidebar:
     st.markdown("### ⭐ Koleksi Favorit")
     list_fav = st.session_state.sistem_file.dapatkan_semua_favorit()
     if not list_fav:
-        st.caption("Belum ada file/folder favorit.")
+        st.caption("Belum ada berkas favorit.")
     else:
         for fav_node in list_fav:
             ikon_fav = "📁 " if fav_node.is_folder else dapatkan_ikon_file(fav_node.data)
@@ -227,20 +241,11 @@ with st.sidebar:
                     st.session_state.opened_file = fav_node
                 st.rerun()
 
-# AREA NAVIGATION BREADCRUMBS
-b_nodes = dapatkan_path_list(st.session_state.current_node)
-cols_b = st.columns(len(b_nodes) * 2 - 1)
-
-idx_col = 0
-for i, node in enumerate(b_nodes):
-    if cols_b[idx_col].button(node.data, key=f"breadcrumb_{id(node)}"):
-        st.session_state.current_node = node
-        st.session_state.opened_file = None
-        st.rerun()
-    idx_col += 1
-    if idx_col < len(cols_b):
-        cols_b[idx_col].write(" / ")
-        idx_col += 1
+# Tombol Penunjuk Navigasi "Home" Kecil di bawah Banner
+if st.button("💻 Home", key="btn_home_top"):
+    st.session_state.current_node = st.session_state.sistem_file.root
+    st.session_state.opened_file = None
+    st.rerun()
 
 st.markdown(" ")
 
@@ -248,7 +253,8 @@ st.markdown(" ")
 kolom_files, kolom_aksi = st.columns([2, 1])
 
 with kolom_files:
-    st.subheader(f"📂 Folder: {st.session_state.current_node.data}")
+    # Menghilangkan teks "Folder:" berulang, langsung menampilkan jalurnya
+    st.subheader(f"📂 {st.session_state.current_node.data}")
     
     if st.session_state.current_node.parent is not None:
         if st.button("🔙 Kembali", use_container_width=True):
@@ -265,12 +271,13 @@ with kolom_files:
             label_ukuran = "" if child.is_folder else f"({child.ukuran_mb} MB)"
             fav_ikon = "⭐" if child.is_favorite else "☆"
             
-            with st.container(border=True):
+            with st.container():
                 if child.is_folder:
+                    # Layout baris folder: Nama di kiri, tombol aksi berdampingan di kanan
                     c1, c2, c3 = st.columns([4, 1, 1])
-                    c1.markdown(f"#### {ikon} {child.data}", unsafe_allow_html=True)
+                    c1.markdown(f"<div style='padding-top:5px;'><b>{ikon} {child.data}</b></div>", unsafe_allow_html=True)
                     with c2:
-                        if st.button(f"{fav_ikon} Fav", key=f"fav_folder_{id(child)}", use_container_width=True):
+                        if st.button(f"{fav_ikon} Favorit", key=f"fav_folder_{id(child)}", use_container_width=True):
                             child.is_favorite = not child.is_favorite
                             st.rerun()
                     with c3:
@@ -279,18 +286,16 @@ with kolom_files:
                             st.session_state.opened_file = None
                             st.rerun()
                 else:
-                    # AMBIL DATA BINARI DARI GITHUB UNTUK FITUR DOWNLOAD STABLE
                     try:
                         respon_data = requests.get(child.url_asli_github).content
                     except:
-                        respon_data = b"Gagal mengambil data file asli dari cloud."
+                        respon_data = b"Error cloud data."
 
                     if child.data.endswith(".pdf"):
-                        # PDF: Sesuai keinginanmu, HANYA tombol Favorit dan Unduh Asli Streamlit
                         c1, c2, c3 = st.columns([4, 1, 1])
-                        c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
+                        c1.markdown(f"<div style='padding-top:5px;'><b>{ikon} {child.data}</b> <span style='font-size:12px; color:gray;'>{label_ukuran}</span></div>", unsafe_allow_html=True)
                         with c2:
-                            if st.button(f"{fav_ikon} Fav", key=f"fav_file_{id(child)}", use_container_width=True):
+                            if st.button(f"{fav_ikon} Favorit", key=f"fav_file_{id(child)}", use_container_width=True):
                                 child.is_favorite = not child.is_favorite
                                 st.rerun()
                         with c3:
@@ -303,13 +308,12 @@ with kolom_files:
                                 use_container_width=True
                             )
                     else:
-                        # FOTO & TEXT: Lengkap tombol Favorit, Buka Preview, dan Unduh Asli Streamlit
                         c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
-                        c1.markdown(f"#### {ikon} {child.data} <span style='font-size:12px; color:gray;'>{label_ukuran}</span>", unsafe_allow_html=True)
+                        c1.markdown(f"<div style='padding-top:5px;'><b>{ikon} {child.data}</b> <span style='font-size:12px; color:gray;'>{label_ukuran}</span></div>", unsafe_allow_html=True)
                         with c2:
-                            if st.button(f"{fav_ikon} Fav", key=f"fav_file_{id(child)}", use_container_width=True):
+                            if st.button(f"{fav_ikon} Favorit", key=f"fav_file_{id(child)}", use_container_width=True):
                                 child.is_favorite = not child.is_favorite
-                                st.rerun()
+                               _st.rerun()
                         with c3:
                             if st.button("Buka 👁️", key=f"buka_file_{id(child)}", use_container_width=True):
                                 st.session_state.opened_file = child
@@ -324,7 +328,6 @@ with kolom_files:
                                 use_container_width=True
                             )
 
-    # AREA SCREEN VIEWER OUTPUT (PREVIEW FILE)
     if st.session_state.opened_file is not None:
         st.markdown("---")
         st.markdown(f"### 🖥️ Preview File: `{st.session_state.opened_file.data}`")
@@ -345,14 +348,14 @@ with kolom_files:
             st.rerun()
 
 with kolom_aksi:
-    st.subheader("⚙️ Pengelola")
-    tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah", "📝 Rename", "🗑️ Hapus", "🗂️ Structure"])
+    st.subheader("⚙️ Pengelola Berkas")
+    tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah Berkas", "📝 Rename", "🗑️ Hapus", "🗂️ File>"])
     
     with tab_tambah:
-        nama_baru = st.text_input("Nama Baru:", key="add_name").strip()
-        tipe = st.radio("Jenis:", ("Folder", "File"), horizontal=True)
-        ukuran_input = st.number_input("Ukuran (MB):", min_value=1, value=2) if tipe == "File" else 0
-        if st.button("Simpan", type="primary", use_container_width=True):
+        nama_baru = st.text_input("Nama Berkas/Folder Baru:", key="add_name").strip()
+        tipe = st.radio("Jenis Objek:", ("Folder", "File"), horizontal=True)
+        ukuran_input = st.number_input("Ukuran Berkas (MB):", min_value=1, value=2) if tipe == "File" else 0
+        if st.button("Simpan Data Baru", type="primary", use_container_width=True):
             if nama_baru:
                 st.session_state.current_node.add_child(TreeNode(nama_baru, is_folder=(tipe == "Folder"), ukuran_mb=ukuran_input))
                 st.rerun()
