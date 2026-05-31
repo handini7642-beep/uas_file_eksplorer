@@ -10,12 +10,12 @@ st.markdown("""
     <style>
     /* 🔴 Background utama aplikasi diubah jadi warna biru muda pastel yang soft */
     .stApp { 
-        background-color: #F2CDB6; 
+        background-color: #CEEBED; 
     }
     
     /* ⚫ Kotak Banner utama My Files diubah jadi warna Beige Pastel yang hangat & soft */
     .main-banner {
-        background: linear-gradient(135deg, #EDBC98); 
+        background: linear-gradient(135deg, #74D1F7); 
         padding: 35px; 
         border-radius: 16px; 
         margin-bottom: 25px; 
