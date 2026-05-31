@@ -121,12 +121,12 @@ if "sistem_file" not in st.session_state:
     # Username asli kamu sudah terpasang rapi di sini
     username_github = "handini7642-beep" 
 
-    # Jalur baru agar PDF terbuka di tab baru tanpa langsung otomatis terdownload
+    # Pastikan pakai link 'raw.githubusercontent.com' lagi ya
     dokumen.add_child(TreeNode(
         "Tugas_Struktur_Data.pdf", 
         is_folder=False, 
         ukuran_mb=12,
-        url_asli_github=f"https://github.com/{username_github}/uas_file_eksplorer/blob/main/Dokumen/Tugas_Struktur_Data.pdf"
+        url_asli_github=f"https://raw.githubusercontent.com/{username_github}/uas_file_eksplorer/main/Dokumen/Tugas_Struktur_Data.pdf"
     ))
     
     # Jalur tembak ke Catatan Teks Asli milikmu
@@ -266,9 +266,14 @@ with kolom_files:
         elif st.session_state.opened_file.data.endswith((".jpg", ".jpeg", ".png")):
             st.image(st.session_state.opened_file.url_asli_github, caption="Preview Foto dari GitHub", use_container_width=True)
             
+        # KODE BARU: Langsung memunculkan dokumen PDF di dalam aplikasi
         elif st.session_state.opened_file.data.endswith(".pdf"):
-            st.success("📄 Dokumen ini adalah file PDF Asli.")
-            st.markdown(f'Link baca langsung: [Buka PDF di Tab Baru]({st.session_state.opened_file.url_asli_github})')
+            st.success("📄 Dokumen PDF Berhasil Dimuat dari GitHub:")
+
+            # Trik mengurung file PDF menggunakan iframe HTML agar tampil di bawah
+            pdf_url = st.session_state.opened_file.url_asli_github
+            komponen_pdf = f'<iframe src="{pdf_url}" width="100%" height="600" type="application/pdf"></iframe>'
+            st.markdown(komponen_pdf, unsafe_allow_html=True)
             
         if st.button("Tutup Preview ❌"):
             st.session_state.opened_file = None
