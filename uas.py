@@ -136,7 +136,7 @@ def tentukan_mime_type(nama_file):
 
 
 # ====================================================================
-# 4. INISIALISASI SESSION STATE
+# 4. INISIALISASI SESSION STATE (MENGGUNAKAN STRUKTUR SINKRON GITHUB)
 # ====================================================================
 if "sistem_file" not in st.session_state:
     sistem_file = GeneralTree("🖥️ Home")
@@ -149,26 +149,26 @@ if "sistem_file" not in st.session_state:
     local_disk_c.add_child(dokumen)
     local_disk_c.add_child(download)
 
-    # Konten simulasi data saat file dibuka atau diunduh di internet
+    # Inisialisasi file Dokumen sesuai milikmu di GitHub
     dokumen.add_child(TreeNode(
         "Tugas_Struktur_Data.pdf", 
         is_folder=False, 
         ukuran_mb=12,
-        konten_simulasi="=== [DOKUMEN PDF DIGITAL] ===\nTugas Kuliah: Implementasi Non-Linear Data Structure (Tree)\nNama Mahasiswa: Sistem Explorer\nNilai Evaluasi: 100 / 100\n\nKonten Log Terlampir Berhasil Diverifikasi."
+        konten_simulasi="=== [DOKUMEN PDF DIGITAL] ===\nTugas Kuliah Kelompok: Implementasi Non-Linear Data Structure (Tree)\nStatus File: Sukses diverifikasi secara online di internet."
     ))
     dokumen.add_child(TreeNode(
         "Catatan_Algoritma.txt", 
         is_folder=False, 
         ukuran_mb=2,
-        konten_simulasi="Catatan Belajar Mandiri:\n- Tree terdiri dari root, branch, dan leaf.\n- Implementasi General Tree di Streamlit menggunakan Session State agar data tidak hilang saat re-render.\n- Sukses menambahkan fitur real download!"
+        konten_simulasi="Catatan Kelompok Belajar Algoritma:\n- Representasi silsilah folder menggunakan tipe General Tree.\n- Setiap folder bertindak sebagai Parent, dan isinya bertindak sebagai Children."
     ))
     
-    # Menggunakan nama foto.jpg agar sesuai dengan pilihan barumu di GitHub
+    # Sinkronisasi penuh dengan nama file foto.jpg barumu di GitHub
     download.add_child(TreeNode(
         "foto.jpg", 
         is_folder=False, 
-        ukuran_mb=18,
-        konten_simulasi="=== [IMAGE PREVIEW] ===\n[ File: foto.jpg ]\nFormat: JPEG Image\nResolusi Standar: 1920x1080 piksel\nDeskripsi: Dokumentasi kemeriahan acara panggung pentas seni tahunan."
+        ukuran_mb=8,
+        konten_simulasi="=== [IMAGE PREVIEW] ===\n[ Berkas: foto.jpg ]\nFormat berkas berhasil dibaca dari direktori online GitHub Kelompok."
     ))
     
     st.session_state.sistem_file = sistem_file
@@ -182,8 +182,8 @@ if "sistem_file" not in st.session_state:
 
 st.markdown("""
     <div style="background: linear-gradient(135deg, #4F46E5, #06B6D4); padding: 25px; border-radius: 15px; margin-bottom: 25px; color: white;">
-        <h1 style='margin:0; font-weight: 700;'>🗃️ My Files</h1>
-        <p style='margin:5px 0 0 0; opacity: 0.9;'>Aplikasi Manajemen Smart File Management</p>
+        <h1 style='margin:0; font-weight: 700;'>🗃️ Smart File Explorer Kelompok</h1>
+        <p style='margin:5px 0 0 0; opacity: 0.9;'>Aplikasi UAS Struktur Data Terintegrasi Cloud</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -254,14 +254,14 @@ for i, node in enumerate(b_nodes):
 
 st.markdown(" ")
 
-# LAYOUT MANAGEMENT FILE
+# LAYOUT UTAMA PROGRAM
 kolom_files, kolom_aksi = st.columns([2, 1])
 
 with kolom_files:
-    st.subheader(f"{st.session_state.current_node.data}")
+    st.subheader(f"📂 Direktori Aktif: {st.session_state.current_node.data}")
     
     if st.session_state.current_node.parent is not None:
-        if st.button("🔙 Kembali", use_container_width=True):
+        if st.button("🔙 Kembali ke Folder Sebelumnya", use_container_width=True):
             st.session_state.current_node = st.session_state.current_node.parent
             st.session_state.opened_file = None
             st.rerun()
@@ -298,7 +298,7 @@ with kolom_files:
                             child.is_favorite = not child.is_favorite
                             st.rerun()
                     with c3:
-                        if st.button("Buka 📂", key=f"buka_file_{id(child)}", use_container_width=True):
+                        if st.button("Lihat 👁️", key=f"buka_file_{id(child)}", use_container_width=True):
                             st.session_state.opened_file = child
                             st.rerun()
                     with c4:
@@ -313,7 +313,7 @@ with kolom_files:
                             use_container_width=True
                         )
 
-    # AREA SCREEN VIEWER OUTPUT (MEMBUKA FILE DAN OUTPUT NYA)
+    # AREA SCREEN VIEWER OUTPUT (PREVIEW FILE)
     if st.session_state.opened_file is not None:
         st.markdown("---")
         st.markdown(f"### 🖥️ Viewer Output File: `{st.session_state.opened_file.data}`")
@@ -387,5 +387,5 @@ with kolom_aksi:
                         st.rerun()
                         
     with tab_pohon:
-        st.write("Visualisasi Logika Rekursif Tree:")
+        st.write("Visualisasi Logika Rekursif General Tree:")
         st.session_state.sistem_file.display_streamlit()
