@@ -1,1 +1,6 @@
-catatan algoridma
+ALGORITMA
+
+Algoritma merupakan dasar dalam pemrograman yang berisi langkah-langkah penyelesaian masalah secara terurut. Sebelum menulis kode, algoritma biasanya dibuat dalam bentuk narasi, pseudocode, atau flowchart untuk membantu memahami alur program. Dengan algoritma yang baik, program dapat berjalan lebih efektif, mudah dikembangkan, dan lebih mudah diperbaiki apabila terjadi kesalahan.
+
+Kesimpulan:
+Algoritma memiliki peran penting dalam proses pengembangan program karena membantu menyusun langkah-langkah penyelesaian masalah secara terstruktur. Dengan memahami dan menerapkan algoritma yang baik, proses pembuatan program menjadi lebih terarah, efisien, dan menghasilkan solusi yang lebih mudah dipahami serta dikembangkan.
