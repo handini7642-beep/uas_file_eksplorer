@@ -105,7 +105,7 @@ def dapatkan_path_list(node):
 
 
 # ====================================================================
-# 4. INISIALISASI SESSION STATE (LINKING LANGSUNG KE GITHUB KAMU)
+# 4. INISIALISASI SESSION STATE (SINKRON DENGAN USERNAME KAMU)
 # ====================================================================
 if "sistem_file" not in st.session_state:
     sistem_file = GeneralTree("🖥️ Home")
@@ -118,10 +118,10 @@ if "sistem_file" not in st.session_state:
     local_disk_c.add_child(dokumen)
     local_disk_c.add_child(download)
 
-    # GANTI TULISAN "NAMA_AKUN_GITHUB_KAMU" DI BAWAH INI DENGAN USERNAME GITHUB-MU:
-    username_github = "NAMA_AKUN_GITHUB_KAMU" 
+    # Username asli kamu sudah terpasang rapi di sini
+    username_github = "handini7642-beep" 
 
-    # File PDF Asli dari GitHub kamu
+    # Jalur tembak ke PDF Asli milikmu
     dokumen.add_child(TreeNode(
         "Tugas_Struktur_Data.pdf", 
         is_folder=False, 
@@ -129,7 +129,7 @@ if "sistem_file" not in st.session_state:
         url_asli_github=f"https://raw.githubusercontent.com/{username_github}/uas_file_eksplorer/main/Dokumen/Tugas_Struktur_Data.pdf"
     ))
     
-    # File Teks Catatan Asli dari GitHub kamu
+    # Jalur tembak ke Catatan Teks Asli milikmu
     dokumen.add_child(TreeNode(
         "Catatan_Algoritma.txt", 
         is_folder=False, 
@@ -137,7 +137,7 @@ if "sistem_file" not in st.session_state:
         url_asli_github=f"https://raw.githubusercontent.com/{username_github}/uas_file_eksplorer/main/Dokumen/Catatan_Algoritma.txt"
     ))
     
-    # File Foto Asli dari GitHub kamu
+    # Jalur tembak ke Foto Asli milikmu
     download.add_child(TreeNode(
         "foto.jpg", 
         is_folder=False, 
@@ -248,7 +248,6 @@ with kolom_files:
                             st.rerun()
                             
                     with c3:
-                        # CARA UTAMA DOWNLOAD: MENEMBAK LINK DOWNLOAD ASLI GITHUB
                         st.markdown(f'<a href="{child.url_asli_github}" target="_blank"><button style="width:100%; background-color:#4F46E5; color:white; border:none; padding:6px; border-radius:5px; cursor:pointer;">Unduh 📥</button></a>', unsafe_allow_html=True)
 
     # AREA SCREEN VIEWER OUTPUT (PREVIEW)
@@ -256,7 +255,6 @@ with kolom_files:
         st.markdown("---")
         st.markdown(f"### 🖥️ Preview File: `{st.session_state.opened_file.data}`")
         
-        # Jika file teks, ambil teks aslinya dari GitHub
         if st.session_state.opened_file.data.endswith(".txt"):
             try:
                 respon = requests.get(st.session_state.opened_file.url_asli_github)
@@ -265,11 +263,9 @@ with kolom_files:
                 konten_txt = "Gagal memuat isi catatan dari GitHub."
             st.markdown(f'<div class="file-content">{konten_txt}</div>', unsafe_allow_html=True)
             
-        # Jika file gambar, tampilkan gambar aslinya dari GitHub
         elif st.session_state.opened_file.data.endswith((".jpg", ".jpeg", ".png")):
             st.image(st.session_state.opened_file.url_asli_github, caption="Preview Foto dari GitHub", use_container_width=True)
             
-        # Jika file PDF, berikan info dan link bacanya
         elif st.session_state.opened_file.data.endswith(".pdf"):
             st.success("📄 Dokumen ini adalah file PDF Asli.")
             st.markdown(f'Link baca langsung: [Buka PDF di Tab Baru]({st.session_state.opened_file.url_asli_github})')
