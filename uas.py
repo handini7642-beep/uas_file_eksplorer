@@ -115,7 +115,7 @@ def dapatkan_ikon_file(nama_file):
     if "." in nama_file:
         ekstensi = nama_file.split(".")[-1].lower()
         if ekstensi in ["pdf"]: return "📕 "
-        if ekstensi in ["txt", "docx", "doc"]: return "📄 "
+        if __ekstensi in ["txt", "docx", "doc"]: return "📄 "
         if ekstensi in ["jpg", "jpeg", "png"]: return "🖼️ "
     return "📝 "
 
@@ -253,7 +253,6 @@ st.markdown(" ")
 kolom_files, kolom_aksi = st.columns([2, 1])
 
 with kolom_files:
-    # Menghilangkan teks "Folder:" berulang, langsung menampilkan jalurnya
     st.subheader(f"📂 {st.session_state.current_node.data}")
     
     if st.session_state.current_node.parent is not None:
@@ -273,7 +272,6 @@ with kolom_files:
             
             with st.container():
                 if child.is_folder:
-                    # Layout baris folder: Nama di kiri, tombol aksi berdampingan di kanan
                     c1, c2, c3 = st.columns([4, 1, 1])
                     c1.markdown(f"<div style='padding-top:5px;'><b>{ikon} {child.data}</b></div>", unsafe_allow_html=True)
                     with c2:
@@ -313,7 +311,7 @@ with kolom_files:
                         with c2:
                             if st.button(f"{fav_ikon} Favorit", key=f"fav_file_{id(child)}", use_container_width=True):
                                 child.is_favorite = not child.is_favorite
-                               _st.rerun()
+                                st.rerun()
                         with c3:
                             if st.button("Buka 👁️", key=f"buka_file_{id(child)}", use_container_width=True):
                                 st.session_state.opened_file = child
@@ -349,7 +347,7 @@ with kolom_files:
 
 with kolom_aksi:
     st.subheader("⚙️ Pengelola Berkas")
-    tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah Berkas", "📝 Rename", "🗑️ Hapus", "🗂️ File>"])
+    tab_tambah, tab_ubah, tab_hapus, tab_pohon = st.tabs(["📥 Tambah Berkas", "📝 Rename", "🗑️ Hapus", "🗂️ File Structure"])
     
     with tab_tambah:
         nama_baru = st.text_input("Nama Berkas/Folder Baru:", key="add_name").strip()
