@@ -121,12 +121,12 @@ if "sistem_file" not in st.session_state:
     # Username asli kamu sudah terpasang rapi di sini
     username_github = "handini7642-beep" 
 
-    # Jalur tembak ke PDF Asli milikmu
+    # Jalur baru agar PDF terbuka di tab baru tanpa langsung otomatis terdownload
     dokumen.add_child(TreeNode(
         "Tugas_Struktur_Data.pdf", 
         is_folder=False, 
         ukuran_mb=12,
-        url_asli_github=f"https://raw.githubusercontent.com/{username_github}/uas_file_eksplorer/main/Dokumen/Tugas_Struktur_Data.pdf"
+        url_asli_github=f"https://github.com/{username_github}/uas_file_eksplorer/blob/main/Dokumen/Tugas_Struktur_Data.pdf"
     ))
     
     # Jalur tembak ke Catatan Teks Asli milikmu
