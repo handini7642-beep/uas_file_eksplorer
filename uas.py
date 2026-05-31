@@ -15,7 +15,7 @@ st.markdown("""
     
     /* ⚫ Kotak Banner utama My Files diubah jadi warna Beige Pastel yang hangat & soft */
     .main-banner {
-        background: linear-gradient(135deg, #74D1F7); 
+        background: linear-gradient(135deg, #AOF2ED); 
         padding: 35px; 
         border-radius: 16px; 
         margin-bottom: 25px; 
@@ -25,7 +25,7 @@ st.markdown("""
     
     /* Box File / Folder List dibuat putih bersih agar kontras di atas background biru muda */
     div[data-testid="stCard"] {
-        background-color: #ffffff;
+        background-color: #AOF2ED;
         border-radius: 12px;
         padding: 12px 20px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
