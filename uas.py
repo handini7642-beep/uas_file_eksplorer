@@ -2,34 +2,34 @@ import streamlit as st
 import requests
 
 # ====================================================================
-# 1. KONFIGURASI HALAMAN & STYLE CSS (TEMA WARNA PASTEL CANTIK & SOFT)
+# 1. KONFIGURASI HALAMAN & STYLE CSS (TEMA BIRU MUDA PASTEL & BEIGE)
 # ====================================================================
 st.set_page_config(page_title="File Explorer Pro", layout="wide")
 
 st.markdown("""
     <style>
-    /* Background utama aplikasi diubah jadi warna lavender pastel yang sangat soft */
+    /* 🔴 Background utama aplikasi diubah jadi warna biru muda pastel yang soft */
     .stApp { 
-        background-color: #F0F2FA; 
+        background-color: #EBF2FA; 
     }
     
-    /* Banner utama My Files diubah dari biru jreng menjadi dusty pink/baby pink pastel soft */
+    /* ⚫ Kotak Banner utama My Files diubah jadi warna Beige Pastel yang hangat & soft */
     .main-banner {
-        background: linear-gradient(135deg, #F3B0C3, #FFC8DD); 
+        background: linear-gradient(135deg, #F5EBE0, #E3D5CA); 
         padding: 35px; 
         border-radius: 16px; 
         margin-bottom: 25px; 
-        color: #FFFFFF;
-        box-shadow: 0 4px 15px rgba(243, 176, 195, 0.2);
+        color: #4A3E3D; /* Warna teks dibuat cokelat gelap soft agar kontras dan mudah dibaca */
+        box-shadow: 0 4px 15px rgba(227, 213, 202, 0.2);
     }
     
-    /* Box File / Folder List dibuat putih bersih dengan border soft lavender */
+    /* Box File / Folder List dibuat putih bersih agar kontras di atas background biru muda */
     div[data-testid="stCard"] {
         background-color: #ffffff;
         border-radius: 12px;
         padding: 12px 20px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-        border: 1px solid #E2E7F3;
+        border: 1px solid #D7E3FC;
         margin-bottom: 10px;
     }
     
@@ -41,7 +41,7 @@ st.markdown("""
         border-radius: 8px;
         font-family: 'Courier New', Courier, monospace;
         white-space: pre-wrap;
-        border-left: 5px solid #F3B0C3;
+        border-left: 5px solid #E3D5CA;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -187,14 +187,14 @@ if "sistem_file" not in st.session_state:
 
 
 # ====================================================================
-# 5. ANTARMUKA UTAMA (STREAMLIT UI DENGAN TAMPILAN BARU)
+# 5. ANTARMUKA UTAMA (STREAMLIT UI TAMPILAN PASTEL BARU)
 # ====================================================================
 
-# Kotak Judul My Files diubah menggunakan class CSS .main-banner pastel soft
+# Banner Utama My Files menggunakan class CSS .main-banner (Warna Beige Pastel)
 st.markdown("""
     <div class="main-banner">
         <h1 style='margin:0; font-weight: 700; font-size: 38px;'>🗃️ My Files</h1>
-        <p style='margin:8px 0 0 0; font-size: 14px; opacity: 0.95;'>Smart File Management</p>
+        <p style='margin:8px 0 0 0; font-size: 14px; opacity: 0.85;'>Smart File Management</p>
     </div>
 """, unsafe_allow_html=True)
 
